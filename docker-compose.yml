@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+    # Bases de datos
+    mysql_inventario:
+        image: mysql/mysql-server:latest
+        ports:
+            - "3307:3306"
+        restart: always
+        volumes:
+            - db_volume_inventario:/var/lib/mysql
+            - ./db/inventario.sql:/docker-entrypoint-initdb.d/inventario.sql:ro
+        command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_0900_ai_ci']
+        environment: 
+            MYSQL_ROOT_PASSWORD: "root"
+            MYSQL_HOST: localhost
+            MYSQL_DATABASE: "inventario"
+            MYSQL_USER: "root"
+            # MYSQL_USER: "admin"
+            # MYSQL_PASSWORD: "admin"
+        container_name: db_inventario
+
+    simple_app:
+        image: console_app_inventario
+        depends_on: 
+            - "mysql_inventario"
+        build: 
+            context: ./inventario/
+            dockerfile: Dockerfile
+        environment: 
+            DB_CONNECTION_STRING: "server=localhost;port=3307;user=admin;password=admin;database=inventario"
+        container_name: app_inventario
+
+volumes:
+    db_volume_inventario:
