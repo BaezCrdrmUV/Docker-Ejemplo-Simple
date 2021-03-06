@@ -27,6 +27,8 @@ services:
         build: 
             context: ./inventario/
             dockerfile: Dockerfile
+        stdin_open: true # docker run -i
+        tty: true        # docker run -t
         environment: 
             DB_CONNECTION_STRING: "server=localhost;port=3307;user=admin;password=admin;database=inventario"
         container_name: app_inventario
